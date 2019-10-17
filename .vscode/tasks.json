@@ -1,0 +1,21 @@
+{
+    "tasks": [
+        {
+            "label": "Build All Debug",
+            "type": "shell",
+            "command": "make -f Makefile DEBUG=1",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ],
+    "version": "2.0.0"
+}
