@@ -3,7 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/include/SDL2",
+                "imgui"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
