@@ -35,7 +35,7 @@ int main()
 
   ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
   ImGui_ImplOpenGL2_Init();
-  ImVec4 clear_color = ImVec4(0.0f, 0.8f, 0.00f, 1.0f);
+  ImVec4 clear_color = ImVec4(0.0f, 0.8f, 0.0f, 1.0f);
   bool done = false;
   while (!done)
   {
@@ -57,6 +57,9 @@ int main()
     ImGui_ImplSDL2_NewFrame(window);
     ImGui::GetStyle().WindowRounding = 0.0f;
     ImGui::GetStyle().WindowBorderSize = 0.0f;
+    ImGui::GetStyle().WindowPadding.x = 0.0f;
+    ImGui::GetStyle().WindowPadding.y = 0.0f;
+    
 
     ImGui::NewFrame();
 
@@ -72,19 +75,32 @@ int main()
         ImGui::End();
     }
 
-    {  // Reticle
-        ImVec2 reticleSize(200,200);
-        ImVec2 reticleTopLeftPos((io.DisplaySize.x/2)-(reticleSize.x/2),
-                                 (io.DisplaySize.y/2)-(reticleSize.y/2));
-        ImGui::SetNextWindowBgAlpha(0.5f);
-        ImGui::SetNextWindowPos(reticleTopLeftPos);
-        ImGui::SetNextWindowSize(reticleSize);
-        ImGui::Begin("ReticleWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+    { // Reticle
+      ImVec2 reticleSize(200, 200);
+      ImVec2 reticleTopLeftPos((io.DisplaySize.x / 2) - (reticleSize.x / 2),
+                               (io.DisplaySize.y / 2) - (reticleSize.y / 2));
+      ImGui::SetNextWindowBgAlpha(0.1f);
+      ImGui::SetNextWindowPos(reticleTopLeftPos);
+      ImGui::SetNextWindowSize(reticleSize);
+      ImGui::Begin("ReticleWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+      static ImVec4 colf = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+      const ImU32 col = ImColor(colf);
+      ImDrawList *draw_list = ImGui::GetWindowDrawList();
+      ImVec2 p = ImGui::GetCursorScreenPos();
+      draw_list->AddLine(ImVec2(p.x+100, p.y), ImVec2(p.x+100.0, p.y+200.0), col);
+      draw_list->AddLine(ImVec2(p.x, p.y+100), ImVec2(p.x+200.0, p.y+100.0), col);
+      ImGui::End();
+    }
 
+    {
+       ImGui::SetNextWindowBgAlpha(0.0f);
+        ImGui::Begin("MenuWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f),"%s","Settings");
+        ImGui::SetWindowPos(ImVec2(1,1));
         ImGui::End();
     }
 
-  /*  {
+    /*  {
          ImGui::SetNextWindowBgAlpha(0.35f);
       static float f = 0.0f;
       static int counter = 0;
