@@ -55,15 +55,42 @@ int main()
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL2_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
-    ImGui::NewFrame();
-ImGui::SetNextWindowBgAlpha(0.35f);
+    ImGui::GetStyle().WindowRounding = 0.0f;
+    ImGui::GetStyle().WindowBorderSize = 0.0f;
 
-    {
+    ImGui::NewFrame();
+
+    {  // Quit button
+        ImGui::SetNextWindowBgAlpha(0.0f);
+        ImGui::Begin("QuitWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+        if(ImGui::Button("Quit"))
+        {
+            done = true;
+        }
+        ImVec2 pos = ImGui::GetWindowSize();
+        ImGui::SetWindowPos(ImVec2(io.DisplaySize.x-pos.x, io.DisplaySize.y-pos.y));
+        ImGui::End();
+    }
+
+    {  // Reticle
+        ImVec2 reticleSize(200,200);
+        ImVec2 reticleTopLeftPos((io.DisplaySize.x/2)-(reticleSize.x/2),
+                                 (io.DisplaySize.y/2)-(reticleSize.y/2));
+        ImGui::SetNextWindowBgAlpha(0.5f);
+        ImGui::SetNextWindowPos(reticleTopLeftPos);
+        ImGui::SetNextWindowSize(reticleSize);
+        ImGui::Begin("ReticleWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+
+        ImGui::End();
+    }
+
+  /*  {
+         ImGui::SetNextWindowBgAlpha(0.35f);
       static float f = 0.0f;
       static int counter = 0;
       ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-      ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+      ImGui::Text("Windowsize is %f %f", io.DisplaySize.x, io.DisplaySize.y);               // Display some text (you can use a format strings too)
 
       ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
       ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
@@ -76,7 +103,7 @@ ImGui::SetNextWindowBgAlpha(0.35f);
       ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
       ImGui::End();
 
-    }
+    }*/
     // Rendering
     ImGui::Render();
     glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
