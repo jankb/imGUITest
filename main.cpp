@@ -63,20 +63,23 @@ int main()
     ImGui::GetStyle().WindowBorderSize = 0.0f;
     ImGui::GetStyle().WindowPadding.x = 0.0f;
     ImGui::GetStyle().WindowPadding.y = 0.0f;
-    
+    ImGui::GetStyle().FrameBorderSize = 0.0f;
+    ImGui::GetStyle().FramePadding.x = 0.0f;
+    ImGui::GetStyle().FramePadding.y = 0.0f;
+    ImGui::GetStyle().FrameRounding = 0.0f;
 
     ImGui::NewFrame();
 
     {  // Quit button
-        ImGui::SetNextWindowBgAlpha(0.0f);
-        ImGui::Begin("QuitWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
-        if(ImGui::Button("Quit"))
-        {
-            done = true;
-        }
-        ImVec2 pos = ImGui::GetWindowSize();
-        ImGui::SetWindowPos(ImVec2(io.DisplaySize.x-pos.x, io.DisplaySize.y-pos.y));
-        ImGui::End();
+      ImGui::SetNextWindowBgAlpha(0.0f);
+      ImGui::Begin("QuitWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+      if(ImGui::Button("Quit"))
+      {
+        done = true;
+      }
+      ImVec2 pos = ImGui::GetWindowSize();
+      ImGui::SetWindowPos(ImVec2(io.DisplaySize.x-pos.x, io.DisplaySize.y-pos.y));
+      ImGui::End();
     }
 
     { // Reticle
@@ -96,22 +99,49 @@ int main()
       ImGui::End();
     }
 
-    { //Menu
-       ImGui::SetNextWindowBgAlpha(0.0f);
-        ImGui::Begin("MenuWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f),"%s","Settings");
-        ImGui::SetWindowPos(ImVec2(1,1));
-        ImGui::End();
+    { // zeroing
+      ImVec2 zeroingSize(100, 100);
+      ImVec2 zeroingTopLeftPos((io.DisplaySize.x / 2) - (zeroingSize.x / 2),
+                               (io.DisplaySize.y / 2) - (zeroingSize.y / 2));
+      ImGui::SetNextWindowBgAlpha(0.2f);
+      ImGui::SetNextWindowPos(zeroingTopLeftPos);
+      ImGui::SetNextWindowSize(zeroingSize);
+      ImGui::Begin("ZeroingWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+      static ImVec4 colf = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
+      const ImU32 col = ImColor(colf);
+      ImDrawList *draw_list = ImGui::GetWindowDrawList();
+      ImVec2 p = ImGui::GetCursorScreenPos();
+      draw_list->AddLine(ImVec2(p.x, p.y), ImVec2(p.x+100.0, p.y), col);
+      draw_list->AddLine(ImVec2(p.x, p.y+50), ImVec2(p.x+200.0, p.y+200.0), col);
+      ImGui::End();
     }
 
-     { //Menu
-       ImGui::SetNextWindowBgAlpha(1.0f);
-       ImGui::SetNextWindowPos(ImVec2(1,400));
-       ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, 0.0f));
-        ImGui::Begin("BITLine", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f),"%s","BIT sometihing something");
-        
-        ImGui::End();
+    { //Menu
+      ImGui::SetNextWindowBgAlpha(0.0f);
+      ImGui::Begin("MenuWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+      ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f),"%s","Settings");
+      ImGui::SetWindowPos(ImVec2(1,1));
+      ImGui::End();
+    }
+
+    { //Bit message
+      std::string bitMessage("BIT sometihing something");
+      ImVec2 fontSize = ImGui::CalcTextSize(bitMessage.c_str());
+      ImGui::SetNextWindowBgAlpha(0.0f);
+      ImGui::SetNextWindowPos(ImVec2(1.0, 400.0));
+      ImGui::SetNextWindowSize(ImVec2(640.0, 0.0));
+
+      ImGui::Begin("BITLine", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+
+      {
+        const ImU32 bit_col = ImColor(ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+        ImDrawList *draw_list = ImGui::GetWindowDrawList();
+        ImVec2 p = ImGui::GetCursorScreenPos();
+        draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 640.0, p.y + fontSize.y), bit_col);
+      }
+      ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", bitMessage.c_str());
+
+      ImGui::End();
     }
 
     /*  {
