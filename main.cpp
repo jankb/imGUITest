@@ -1,4 +1,7 @@
 #include <iostream>
+#include <map>
+#include <chrono>
+#include <thread>
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -24,7 +27,7 @@ int main()
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
-  SDL_Window* window = SDL_CreateWindow("My ImGUI Example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, window_flags);
+  SDL_Window* window = SDL_CreateWindow("My ImGUI Example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, window_flags);
   if (SDL_SetWindowOpacity(window, 0.1f) != 0)
     printf("Opacity not supported...");
   SDL_GLContext gl_context = SDL_GL_CreateContext(window);
@@ -37,22 +40,52 @@ int main()
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+
   ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
   ImGui_ImplOpenGL2_Init();
+
+  float scaleFactor = io.DisplaySize.x / 640;
+  if (scaleFactor <= 1) scaleFactor = 1;
+  io.Fonts->AddFontDefault();
+  std::map<int, ImFont*>fontmap;
+
+  for (int fontSize = 10; fontSize < 40; fontSize++)
+  {
+      ImFont *font = io.Fonts->AddFontFromFileTTF("./fonts/Vera.ttf", fontSize);
+      std::cout << "font " << fontSize << std::endl;
+      fontmap.insert(std::pair<int, ImFont*>(fontSize, font));
+  }
+
+  /*
+  int fontSize  = 18;
+  ImFont *font = io.Fonts->AddFontFromFileTTF("./fonts/Vera.ttf", fontSize);
+  std::cout << "font " << fontSize << " is " << (font->IsLoaded() ? "" : "not") << " loaded" << std::endl;
+  fontmap.insert(std::pair<int, ImFont*>(fontSize, font));
+
+  fontSize = 24;
+  font = io.Fonts->AddFontFromFileTTF("./fonts/Vera.ttf", fontSize);
+  std::cout << "font " << fontSize << " is " << (font->IsLoaded() ? "" : "not") << " loaded" << std::endl;
+  fontmap.insert(std::pair<int, ImFont*>(fontSize, font));
+*/
+  ImFont* currentFont = fontmap[18];
+
   ImVec4 clear_color = ImVec4(0.0f, 0.8f, 0.0f, 0.5f);
   bool done = false;
+
   while (!done)
   {
+
+
     // Poll and handle events (inputs, window resize, etc.)
     // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
     // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
     // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
     // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
+
+
+
+    if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
     {
-      ImGui_ImplSDL2_ProcessEvent(&event);
-      if (event.type == SDL_QUIT)
         done = true;
     }
 
@@ -69,6 +102,8 @@ int main()
     ImGui::GetStyle().FrameRounding = 0.0f;
 
     ImGui::NewFrame();
+
+    ImGui::PushFont(currentFont);
 
     {  // Quit button
       ImGui::SetNextWindowBgAlpha(0.0f);
@@ -164,6 +199,7 @@ int main()
       ImGui::End();
 
     }*/
+    ImGui::PopFont();
     // Rendering
     ImGui::Render();
     glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
@@ -172,6 +208,45 @@ int main()
     //glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound
     ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);
+
+
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+      ImGui_ImplSDL2_ProcessEvent(&event);
+      if (event.type == SDL_QUIT)
+        done = true;
+
+      if (event.type == SDL_WINDOWEVENT)
+      {
+          switch(event.window.event)
+          {
+          case SDL_WINDOWEVENT_SIZE_CHANGED:
+          case SDL_WINDOWEVENT_RESIZED:
+          {
+              std::cout << "event.window.data1 " << event.window.data1 << std::endl;
+
+              float newX = static_cast<float>(event.window.data1);
+              scaleFactor =  newX / 640.0f;
+              std::cout << "scaleFactor " << scaleFactor << std::endl;
+              if (scaleFactor <= 0.1) scaleFactor = 0.1;
+              if (scaleFactor > 2) scaleFactor = 2;
+              int fontSize = 18*scaleFactor;
+              std::cout << "Loading new scalefactor " << scaleFactor << " Scalefactor as int " << (int)scaleFactor << " Fontsize  " << fontSize << std::endl;
+              currentFont = fontmap[fontSize];
+             std::cout << "font " << fontSize << " is " << (currentFont->IsLoaded() ? "" : "not") << " loaded" << std::endl;
+
+
+
+
+              break;
+          }
+          }
+      }
+
+
+    }
+
   }
 
   return 0;
