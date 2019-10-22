@@ -10,6 +10,18 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+float translateX(float x)
+{
+  float scale = ImGui::GetIO().DisplaySize.x / 640;
+  return x * scale;
+}
+
+float translateY(float y)
+{
+  float scale = ImGui::GetIO().DisplaySize.y / 480;
+  return y * scale;
+}
+
 int main()
 {
   std::cout << "Starting ..." << std::endl;
@@ -26,7 +38,7 @@ int main()
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-  SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_BORDERLESS);
+  SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI );
   SDL_Window* window = SDL_CreateWindow("My ImGUI Example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, window_flags);
   if (SDL_SetWindowOpacity(window, 0.1f) != 0)
     printf("Opacity not supported...");
@@ -49,7 +61,7 @@ int main()
   io.Fonts->AddFontDefault();
   std::map<int, ImFont*>fontmap;
 
-  for (int fontSize = 10; fontSize < 40; fontSize++)
+  for (int fontSize = 1; fontSize < 45; fontSize++)
   {
       ImFont *font = io.Fonts->AddFontFromFileTTF("./fonts/Vera.ttf", fontSize);
       std::cout << "font " << fontSize << std::endl;
@@ -106,14 +118,18 @@ int main()
     ImGui::PushFont(currentFont);
 
     {  // Quit button
+      char buttonText[128] = "Quit";
+      ImVec2 windowSize(ImGui::CalcTextSize(buttonText));
+      ImGui::SetNextWindowSize(windowSize);
       ImGui::SetNextWindowBgAlpha(0.0f);
+
+      ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x-windowSize.x-5, io.DisplaySize.y-windowSize.y-5));
       ImGui::Begin("QuitWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
-      if(ImGui::Button("Quit"))
+      if(ImGui::Button(buttonText))
       {
         done = true;
       }
-      ImVec2 pos = ImGui::GetWindowSize();
-      ImGui::SetWindowPos(ImVec2(io.DisplaySize.x-pos.x, io.DisplaySize.y-pos.y));
+
       ImGui::End();
     }
 
@@ -152,19 +168,23 @@ int main()
     }
 
     { //Menu
-      ImGui::SetNextWindowBgAlpha(0.0f);
+      char menuItem[20] = ("Settings");
+      ImGui::SetNextWindowBgAlpha(0.0f);      
+      ImVec2 textSize = ImGui::CalcTextSize(menuItem);
+      ImGui::SetNextWindowSize(textSize);
+      ImGui::SetNextWindowPos(ImVec2(1,1));
       ImGui::Begin("MenuWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
-      ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f),"%s","Settings");
-      ImGui::SetWindowPos(ImVec2(1,1));
+      ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f),"%s",menuItem);
+
       ImGui::End();
     }
 
     { //Bit message
-      std::string bitMessage("BIT sometihing something");
-      ImVec2 fontSize = ImGui::CalcTextSize(bitMessage.c_str());
+      char bitMessage[128] = ("BIT sometihing something");
+      ImVec2 fontSize = ImGui::CalcTextSize(bitMessage);
       ImGui::SetNextWindowBgAlpha(0.0f);
-      ImGui::SetNextWindowPos(ImVec2(1.0, 400.0));
-      ImGui::SetNextWindowSize(ImVec2(640.0, 0.0));
+      ImGui::SetNextWindowPos(ImVec2(1.0, translateY(400.0)));
+      ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, 0.0));
 
       ImGui::Begin("BITLine", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
 
@@ -172,9 +192,11 @@ int main()
         const ImU32 bit_col = ImColor(ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
         ImDrawList *draw_list = ImGui::GetWindowDrawList();
         ImVec2 p = ImGui::GetCursorScreenPos();
-        draw_list->AddRectFilled(ImVec2(p.x, p.y), ImVec2(p.x + 640.0, p.y + fontSize.y), bit_col);
+
+        ImVec2 pMax(p.x+io.DisplaySize.x, p.y + fontSize.y);
+        draw_list->AddRectFilled(ImVec2(p.x, p.y), pMax, bit_col);
       }
-      ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", bitMessage.c_str());
+      ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", bitMessage);
 
       ImGui::End();
     }
