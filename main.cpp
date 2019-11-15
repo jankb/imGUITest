@@ -61,7 +61,7 @@ int main()
   io.Fonts->AddFontDefault();
   std::map<int, ImFont*>fontmap;
 
-  for (int fontSize = 1; fontSize < 45; fontSize++)
+  for (int fontSize = 1; fontSize < 40; fontSize++)
   {
       ImFont *font = io.Fonts->AddFontFromFileTTF("./fonts/Vera.ttf", fontSize);
       std::cout << "font " << fontSize << std::endl;
@@ -133,14 +133,14 @@ int main()
       ImGui::End();
     }
 
-    { // Reticle
+    { // Crosshair
       ImVec2 reticleSize(200, 200);
       ImVec2 reticleTopLeftPos((io.DisplaySize.x / 2) - (reticleSize.x / 2),
                                (io.DisplaySize.y / 2) - (reticleSize.y / 2));
       ImGui::SetNextWindowBgAlpha(0.00001f);
       ImGui::SetNextWindowPos(reticleTopLeftPos);
       ImGui::SetNextWindowSize(reticleSize);
-      ImGui::Begin("ReticleWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+      ImGui::Begin("CrossHairWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
       static ImVec4 colf = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
       const ImU32 col = ImColor(colf);
       ImDrawList *draw_list = ImGui::GetWindowDrawList();
@@ -150,14 +150,14 @@ int main()
       ImGui::End();
     }
 
-    { // zeroing
+    { // Blue  box
       ImVec2 zeroingSize(100, 100);
       ImVec2 zeroingTopLeftPos((io.DisplaySize.x / 2) - (zeroingSize.x / 2),
                                (io.DisplaySize.y / 2) - (zeroingSize.y / 2));
       ImGui::SetNextWindowBgAlpha(0.2f);
       ImGui::SetNextWindowPos(zeroingTopLeftPos);
       ImGui::SetNextWindowSize(zeroingSize);
-      ImGui::Begin("ZeroingWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+      ImGui::Begin("BlueBoxWindow", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
       static ImVec4 colf = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
       const ImU32 col = ImColor(colf);
       ImDrawList *draw_list = ImGui::GetWindowDrawList();
@@ -179,14 +179,14 @@ int main()
       ImGui::End();
     }
 
-    { //Bit message
-      char bitMessage[128] = ("BIT sometihing something");
+    { //Messages to user message
+      char bitMessage[128] = ("Message something something, game over.");
       ImVec2 fontSize = ImGui::CalcTextSize(bitMessage);
       ImGui::SetNextWindowBgAlpha(0.0f);
       ImGui::SetNextWindowPos(ImVec2(1.0, translateY(400.0)));
       ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, 0.0));
 
-      ImGui::Begin("BITLine", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
+      ImGui::Begin("UserMessage", NULL, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration);
 
       {
         const ImU32 bit_col = ImColor(ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
