@@ -15,4 +15,8 @@ jobs:
           name: Print the Current Time
           command: date
 
+      - run:
+          name: Actual Build
+          command: 'make'
+
           
