@@ -12,8 +12,8 @@ jobs:
           command: echo Hello, world.
 
       - run:
-          name: Print the Current Time
-          command: date
+          name: Install make
+          command: 'apt-get update && sudo apt-get install -y make'
 
       - run:
           name: Actual Build
