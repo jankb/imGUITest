@@ -9,6 +9,12 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+    
+  #  - name: Install g++
+  #    run: 'apt-get update && apt-get install -y gcc g++'
+
+    - name: Install sdl2
+      run: 'apt-get update && apt-get install -y libsdl2-dev'
    
     - name: make
       run: make
